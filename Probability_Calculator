@@ -1,0 +1,34 @@
+import copy
+import random
+class Hat:
+  def __init__(self, **kwargs):
+    self.contents = []
+    for i, v in kwargs.items():
+      self.contents += v * [i]
+  def draw(self,number):
+    try:
+      num_balls = random.sample(self.contents, number)
+    except:
+      num_balls = copy.deepcopy(self.contents)
+    for h in num_balls:
+      self.contents.remove(h)
+    return num_balls
+def experiment(hat, expected_balls, num_balls_drawn, num_experiments):
+  L = 0
+  for Q in range(num_experiments):
+    hs= copy.deepcopy(hat)
+    num_balls = hs.draw(num_balls_drawn)
+    list =[]
+    for i, v in expected_balls.items():
+      list += v * [i]
+    if contains(list, num_balls):
+      L += 1
+  prob = L/ num_experiments
+  return prob
+def contains(eb, ab):
+  for m in eb:
+    if m in ab:
+      ab.remove(m)
+    else:
+      return False
+  return True
