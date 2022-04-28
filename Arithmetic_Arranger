@@ -1,0 +1,43 @@
+def arithmetic_arranger(problems, *args):
+  
+  if len(problems) > 5:
+    return "Error: Too many problems."
+  ap = []
+  for i,x in enumerate(problems):
+    o = x.split(" ")
+    lv = max(len(o[0]), len(o[2]))
+    w = lv + 2
+    if o[1] not in "-+":
+      return "Error: Operator must be '+' or '-'."
+    if len(o[0])>4 or len(o[2]) > 4:
+      return "Error: Numbers cannot be more than four digits."
+    try:
+      v1 = int(o[0]) 
+      v2 = int(o[2])
+    except ValueError:
+      return "Error: Numbers must only contain digits."
+    t1 = f"{o[0]:>{w}}"
+    t2 = o[1] + f"{o[2]:>{w-1}}"
+    t = '-' * w
+    try:
+      ap[0] += (' ' * 4) + t1
+    except IndexError:
+      ap.append(t1)
+    try:
+      ap[1]+= (' ' * 4) + t2
+    except IndexError:
+      ap.append(t2)
+    try:
+      ap[2] += (' ' * 4) + t
+    except IndexError:
+      ap.append(t)
+    if args:
+      b = int(o[0])+int(o[2]) if o[1] == '+' else (int(o[0]) - int(o[2]))
+      a = f"{str(b):>{w}}"
+      try:
+        ap[3] += (' ' * 4) + a
+      except IndexError:
+        ap.append(a)
+  p = f"{ap[0]}\n{ap[1]}\n{ap[2]}"
+  p = p + f"\n{ap[3]}" if args else p
+  return p 
