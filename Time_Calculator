@@ -1,0 +1,51 @@
+d = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday']
+def add_time(start, duration, *args):
+  ad = 0
+  [x,y] = start.split(" ")
+  [hours,minutes] = x.split(":")
+  [durhours,durmin]= duration.split(":") 
+    
+  th = int(hours) + int(durhours)
+  tm = int(minutes) + int(durmin)
+  if tm >= 60:
+    tm -= 60
+    th += 1
+  if tm < 10:
+    tm = f"{tm}".zfill(2)
+      
+  if th >= 12:
+    M, L = divmod(th, 12)
+    th = L if L else th
+    if th >12:
+      th = th - ((M-1)*12)
+    if M > 0:
+      if y == "PM":
+        ad= ((M-1) // 2) + 1
+      else:
+        ad = M // 2
+    if M > 0 and M % 2 != 0:
+      y = "AM" if y == "PM" else "PM"
+  nt = str(th)+ ":"
+  nt += str(tm) + f" {y}"
+  if args:
+    gh = args[0].title()
+    if ad >0:
+      ind = d.index(gh)
+      
+      ind += ad % 7
+      if ind > 6:
+        ind = ind -7
+      gh = d[ind]
+    nt += f", {gh}"
+  if ad == 1:
+    nt += " (next day)"
+  elif ad > 1:
+    nt += f" ({ad} days later)"
+  return nt
+
+print(add_time("3:00 PM", "3:10"))
+print(add_time("11:30 AM", "2:32", "Monday"))
+print(add_time("11:43 AM", "00:20"))
+print(add_time("10:10 PM", "3:30"))
+print(add_time("11:43 PM", "24:20", "tueSday"))
+print(add_time("6:30 PM", "205:12"))
