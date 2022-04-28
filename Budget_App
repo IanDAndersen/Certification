@@ -1,0 +1,79 @@
+class Category:
+  def __init__(self, name):
+    self.name = name
+    self.total = 0.0
+    self.ledger=[]
+  def __repr__(self):
+    h = f"{self.name:*^30}\n"
+    man = 0
+    for item in self.ledger:
+      h += f"{item['description'][:23]:<23}{item['amount']:>7.2f}\n"
+      man += item["amount"]
+    h += f"Total: {self.total:.2f}"
+    return h
+  def deposit(self,amount,description = ""):
+    self.total += amount
+    self.ledger.append({"amount": amount,"description": description})
+  def withdraw(self, amount, description = ""):
+    mf = self.check_funds(amount)
+    if mf:
+      self.total -= amount
+      self.ledger.append({"amount": -amount,"description": description})
+    return mf
+  def transfer(self,amount,to_category):
+    gi = self.check_funds(amount)
+    if gi:
+      self.withdraw(amount, f"Transfer to {to_category.name}")
+      to_category.deposit(amount,f"Transfer from {self.name}")  
+    return gi
+  def get_balance(self):
+    return self.total
+  def check_funds(self,amount):
+    return amount <= self.total
+def create_spend_chart(categories):
+  h = "Percentage spent by category\n"
+  e = 0 
+  l = {}
+  for m in categories:
+    m_e = 0
+    for item in m.ledger:
+      amount = item["amount"]
+      if amount <0:
+        e += abs(amount)
+        m_e += abs(amount)
+    l[m.name] = m_e
+  l = {
+    g: (q/e)*100
+    for g,q in l.items()
+  }
+  dw = len(l)*3 + 1
+  spac= dw - 1
+  for i in range(100,-1,-10):
+    h += f"{i:>3}| "
+    br= []
+    for t in l.values():
+      rv= [' '] * 3
+      if t >= i:
+        rv[0] = "o"
+      br +=rv
+    h += f"{''.join(br)}{' ' * (spac - len(br))}\n"
+  h += f"{' ' * 4}{'-' * dw}\n"
+  cs = [list(name) for name in l]
+  while any(cs):
+    h += f"{' ' * 4}"
+    for d in cs:
+      h += f" {' ' if not d else d.pop(0)} "
+    h += " \n"
+  h = h.strip() + '  '
+  return h
+food = Category("food")
+entertainment = Category("entertainment")
+business = Category("business")
+food.deposit(900, "deposit")
+entertainment.deposit(900, "deposit")
+business.deposit(900, "deposit")
+food.withdraw(105.55)
+entertainment.withdraw(33.40)
+business.withdraw(10.99)
+actual = create_spend_chart([business, food, entertainment])
+print(actual)
